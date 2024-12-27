@@ -128,7 +128,7 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 echo -e "${GREEN}Systemd service created successfully.${RESET}"
-
+chown -R sonarqube:sonarqube /opt/sonarqube/*
 # Reload systemd and start SonarQube service
 echo -e "${CYAN}Starting SonarQube service...${RESET}"
 systemctl daemon-reload
@@ -145,3 +145,7 @@ echo -e "${BOLD_GREEN}SonarQube setup completed successfully!${RESET}"
 echo -e "${CYAN}You can access SonarQube at http://your_server_ip:9000${RESET}"
 echo -e "${CYAN}Default login credentials are admin / admin. Please change the password after the first login.${RESET}"
 echo -e "${CYAN}Database credentials saved in ${YELLOW}${CREDENTIALS_FILE}${RESET}"
+
+
+echo -e "${CYAN}If error try Verifying the user permission, sonarqube user access for home dir, schema to public in sonar.properties at /opt/sonarqube/confg.  ${YELLOW}${CREDENTIALS_FILE}${RESET}"
+ 
