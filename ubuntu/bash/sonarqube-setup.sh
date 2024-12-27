@@ -20,8 +20,9 @@ SONARQUBE_URL="https://binaries.sonarsource.com/Distribution/sonarqube/${SONARQU
 SONARQUBE_DIR="/opt/sonarqube"
 DB_NAME="sonarqube"
 DB_USER="sonar"
-DB_PASS="StrongPassword"  # Change this to a strong password
+DB_PASS=$(openssl rand -base64 16)  # Generate a random password
 SYS_USER="sonarqube"
+CREDENTIALS_FILE="credentials.txt"
 
 # Update and install required packages
 echo -e "${CYAN}Updating system and installing required packages...${RESET}"
@@ -42,6 +43,20 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 echo -e "${GREEN}PostgreSQL configured successfully.${RESET}"
+
+# Save credentials
+echo -e "${CYAN}Saving database credentials to ${YELLOW}${CREDENTIALS_FILE}${RESET}..."
+cat > $CREDENTIALS_FILE <<EOL
+SonarQube Database Credentials:
+Database Name: ${DB_NAME}
+Username: ${DB_USER}
+Password: ${DB_PASS}
+EOL
+if [ $? -ne 0 ]; then
+  echo -e "${RED}Error: Failed to save credentials.${RESET}"
+  exit 1
+fi
+echo -e "${GREEN}Credentials saved to ${CREDENTIALS_FILE}.${RESET}"
 
 # Download and extract SonarQube
 echo -e "${CYAN}Downloading and extracting SonarQube...${RESET}"
@@ -128,3 +143,4 @@ echo -e "${GREEN}SonarQube service started and enabled successfully.${RESET}"
 echo -e "${BOLD_GREEN}SonarQube setup completed successfully!${RESET}"
 echo -e "${CYAN}You can access SonarQube at http://your_server_ip:9000${RESET}"
 echo -e "${CYAN}Default login credentials are admin / admin. Please change the password after the first login.${RESET}"
+echo -e "${CYAN}Database credentials saved in ${YELLOW}${CREDENTIALS_FILE}${RESET}"
