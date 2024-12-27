@@ -26,7 +26,7 @@ CREDENTIALS_FILE="credentials.txt"
 
 # Update and install required packages
 echo -e "${CYAN}Updating system and installing required packages...${RESET}"
-apt update && apt install -y openjdk-11-jdk unzip wget postgresql postgresql-contrib
+apt update && apt install -y openjdk-17-jdk unzip wget postgresql postgresql-contrib
 if [ $? -ne 0 ]; then
   echo -e "${RED}Error: Failed to install required packages.${RESET}"
   exit 1
@@ -52,6 +52,7 @@ Database Name: ${DB_NAME}
 Username: ${DB_USER}
 Password: ${DB_PASS}
 EOL
+echo -e "${CYAN} Password: ${DB_PASS} ${RESET}"
 if [ $? -ne 0 ]; then
   echo -e "${RED}Error: Failed to save credentials.${RESET}"
   exit 1
