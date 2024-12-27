@@ -21,7 +21,7 @@ cleanup_swap() {
     swapoff "$SWAP_FILE"
     rm -f "$SWAP_FILE"
     sed -i '/\/swapfile/d' /etc/fstab
-    echo -e "${GREEN}Swap file cleaned up successfully.${RESET}"
+    echo -e "${GREEN}Swap file and related configurations removed.${RESET}"
   else
     echo -e "${YELLOW}No swap file found.${RESET}"
   fi
@@ -33,7 +33,7 @@ cleanup_user() {
   USER="worker"
   if id "$USER" &>/dev/null; then
     userdel -r "$USER"
-    echo -e "${GREEN}User 'worker' and home directory cleaned up successfully.${RESET}"
+    echo -e "${GREEN}User 'worker' and home directory removed.${RESET}"
   else
     echo -e "${YELLOW}User 'worker' not found.${RESET}"
   fi
@@ -43,8 +43,10 @@ cleanup_user() {
 cleanup_openvpn() {
   echo -e "${CYAN}Cleaning up OpenVPN...${RESET}"
   apt purge -y openvpn easy-rsa
-  rm -rf /etc/openvpn
-  echo -e "${GREEN}OpenVPN and associated configurations cleaned up successfully.${RESET}"
+  rm -rf /etc/openvpn /usr/share/easy-rsa /var/log/openvpn
+  sed -i '/net.ipv4.ip_forward=1/d' /etc/sysctl.conf
+  sysctl -w net.ipv4.ip_forward=0
+  echo -e "${GREEN}OpenVPN and associated configurations removed.${RESET}"
 }
 
 # Function to cleanup Node Exporter
@@ -57,7 +59,7 @@ cleanup_node_exporter() {
     rm -f "$NODE_EXPORTER_SERVICE"
     rm -rf /usr/local/bin/node_exporter
     systemctl daemon-reload
-    echo -e "${GREEN}Node Exporter cleaned up successfully.${RESET}"
+    echo -e "${GREEN}Node Exporter and related files removed.${RESET}"
   else
     echo -e "${YELLOW}Node Exporter service not found.${RESET}"
   fi
@@ -75,10 +77,14 @@ cleanup_sonarqube() {
     rm -f "$SONARQUBE_SERVICE"
     rm -f credentials.txt
     systemctl daemon-reload
-    echo -e "${GREEN}SonarQube cleaned up successfully.${RESET}"
+    echo -e "${GREEN}SonarQube installation, service, and credentials removed.${RESET}"
   else
     echo -e "${YELLOW}SonarQube installation not found.${RESET}"
   fi
+  echo -e "${CYAN}Cleaning up PostgreSQL database for SonarQube...${RESET}"
+  sudo -i -u postgres psql -c "DROP DATABASE sonarqube;" &>/dev/null
+  sudo -i -u postgres psql -c "DROP USER sonar;" &>/dev/null
+  echo -e "${GREEN}PostgreSQL database and user for SonarQube removed.${RESET}"
 }
 
 # Main cleanup logic
