@@ -32,14 +32,6 @@ else
   exit 1
 fi
 
-# Step 3: Set a password for the user
-echo -e "${CYAN}Step 3:${RESET} Setting a password for the user ${YELLOW}$USERNAME${RESET}..."
-if passwd "$USERNAME"; then
-  echo -e "${GREEN}Password set successfully for user ${USERNAME}.${RESET}"
-else
-  echo -e "${RED}Error: Failed to set password for user ${USERNAME}.${RESET}"
-  exit 1
-fi
 
 # Step 4: Verify the user creation
 echo -e "${CYAN}Step 4:${RESET} Verifying the user ${YELLOW}$USERNAME${RESET} creation..."
